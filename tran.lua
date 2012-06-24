@@ -281,7 +281,7 @@ end
 function cancel(transitionHandle)
 	local index = #transitionStack
 	
-	while transitionStack[index] ~= transitionHandle and index ~= 0 do
+	while transitionStack[index] ~= transitionHandle and index > 0 do
 		index = index - 1
 	end
 	
