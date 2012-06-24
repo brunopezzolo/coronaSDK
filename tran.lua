@@ -306,10 +306,10 @@ end
 -- Runtime transition control listener
 transitFunc = function(self,e)
 	local eTime = e.time
-	local deltaTime = eTime - self.prevTime
 	
 	-- only carry out animation when unpaused
 	if self.isActive then
+		local deltaTime = eTime - self.prevTime
 		local obj = self.obj
 		
 		-- execute onStart Listener if assigned
@@ -435,8 +435,7 @@ function to(obj,params)
 	transitionHandle.onComplete = params.onComplete or false
 	transitionHandle.onFrac = params.onFrac or false
 	transitionHandle.timeScale = 1
-	transitionHandle.startTime = system.getTimer()
-	transitionHandle.prevTime = transitionHandle.startTime
+	transitionHandle.prevTime = system.getTimer()
 	transitionHandle.timePassed = 0
 	
 	
