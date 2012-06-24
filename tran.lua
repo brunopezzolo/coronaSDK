@@ -279,7 +279,7 @@ end
 
 -- function to replace transition.cancel
 function cancel(transitionHandle)
-	local index = #transitionStack
+	local index =  #transitionStack
 	
 	while transitionStack[index] ~= transitionHandle and index > 0 do
 		index = index - 1
