@@ -41,9 +41,13 @@ local function spin(cube)
 	
 	cube[_next].isVisible = true
 	cube[_next].x = 200
-	cube[_next].xScale = 0.001
+	cube[_next].xScale = 0.000001
 	transition.to(cube[_next],{time = 1000, x=100,xScale = 1, transition=easing.outQuad})
-	transition.to(cube[_current],{time=1000,x=0,xScale = 0.001,transitioni=easing.outQuad,onComplete=off})
+	transition.to(cube[_current],{time=1000,x=0,xScale = 0.000001,transition=easing.outQuad,onComplete=off})
+end
+
+local function nextrot(obj)
+	transition.to(obj,{time = 500, xScale=1,transition=easing.outQuad})
 end
 
 local function rotate(cube)
@@ -54,6 +58,8 @@ local function rotate(cube)
 	end
 	local finalX = pivot+cube.rot[cube.rotindex]
 	transition.to(cube,{time = 1000, x=finalX,transition=easing.outQuad})
+	transition.to(cube,{time = 500, xScale=1.15, transition=easing.outQuad,onComplete=nextrot})
+	
 end
 
 local function onFrame(e)
