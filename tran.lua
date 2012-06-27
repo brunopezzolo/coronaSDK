@@ -1,10 +1,14 @@
---=================================================--
+--=====================================================================================--
 --[[ 
 Abstract: Improved transition library
-Version: 1.0.0 (June 24th 2012)
+Version: 1.0.1 (June 28th 2012)
 Copyright (c) 2012 Lian Yuanlin, timespacemagic LLP
+
+Changelog:
+v1.0.0 Transition call to replace original Corona SDK function
+v1.0.1 Added stage check for object in transition. Kills listener if object missing.
 --]]
---=================================================--
+--======================================================================================--
 
 module(..., package.seeall)
 
