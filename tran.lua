@@ -365,12 +365,6 @@ transitFunc = function(self,e)
 						obj:rotate(self.endRot-obj.rotation)
 					end
 					
-					if self.onFrac then
-						if self.onFrac.fraction <= 1 then			-- makes sure fractional listener is executed in cases whereby framerate drops, if it's within animation time
-							self.onFrac.listener(obj)
-						end
-					end
-					
 					if self.maskX then
 						obj.maskX = self.endmX
 					end
@@ -389,6 +383,12 @@ transitFunc = function(self,e)
 					
 					if self.maskRotation then
 						obj.maskRotation = self.endmRot
+					end
+					
+					if self.onFrac then
+						if self.onFrac.fraction <= 1 then			-- makes sure fractional listener is executed in cases whereby framerate drops, if it's within animation time
+							self.onFrac.listener(obj)
+						end
 					end
 					
 					if self.onComplete then
