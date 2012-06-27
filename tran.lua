@@ -321,81 +321,89 @@ transitFunc = function(self,e)
 		deltaTime = deltaTime * self.timeScale			-- timeScale parameter allows slowing and increasing speed of animation on the fly
 		self.timePassed = self.timePassed + deltaTime
 		
-		-- make sure delay has passed
-		if self.timePassed-self.delay > 0 then
-			local timePassed = self.timePassed - self.delay
-			-- check if end point reached, ensure object is at required position
-			if timePassed >= self.time then
-				if self.x then
-					obj:translate(self.endX-obj.x,0)
-				end
-				
-				if self.y then
-					obj:translate(0,self.endY-obj.y)
-				end
-				
-				if self.xScale then
-					obj:scale(self.endxS/obj.xScale,1)
-				end
-				
-				if self.yScale then
-					obj:scale(1,self.endyS/obj.yScale)
-				end
-				
-				if self.alpha then
-					obj.alpha = self.endAlpha
-				end
-				
-				if self.rotation then
-					obj:rotate(self.endRot-obj.rotation)
-				end
-				
-				if self.onFrac then
-					if self.onFrac.fraction <= 1 then			-- makes sure fractional listener is executed in cases whereby framerate drops, if it's within animation time
-						self.onFrac.listener(obj)
+		-- check if object has been removed
+		if obj.x then
+			-- make sure delay has passed
+			if self.timePassed-self.delay > 0 then
+				local timePassed = self.timePassed - self.delay
+				-- check if end point reached, ensure object is at required position
+				if timePassed >= self.time then
+					if self.x then
+						obj:translate(self.endX-obj.x,0)
 					end
-				end
-				
-				if self.onComplete then
-					self.onComplete(obj)
-				end
-				
-				cancel(self)
-				self=nil
-			else
-				-- check for fractional listener
-				if self.onFrac then
-					if timePassed/self.time >= self.onFrac.fraction then
-						self.onFrac.listener(obj)
-						self.onFrac = nil
+					
+					if self.y then
+						obj:translate(0,self.endY-obj.y)
 					end
-				end
-				
-				-- change parameters if assigned
-				if self.x then
-					obj:translate(self.transition(timePassed,self.x,self.dX,self.time)-obj.x,0)
-				end
-				
-				if self.y then
-					obj:translate(0,self.transition(timePassed,self.y,self.dY,self.time)-obj.y)
-				end
-				
-				if self.xScale then
-					obj:scale(self.transition(timePassed,self.xScale,self.dxS,self.time)/obj.xScale,1)
-				end
-				
-				if self.yScale then
-					obj:scale(1,self.transition(timePassed,self.yScale,self.dyS,self.time)/obj.yScale)
-				end
-				
-				if self.alpha then
-					obj.alpha = self.transition(timePassed,self.alpha,self.dA,self.time)
-				end
-				
-				if self.rotation then
-					obj:rotate(self.transition(timePassed,self.rotation,self.dRot,self.time)-obj.rotation)
+					
+					if self.xScale then
+						obj:scale(self.endxS/obj.xScale,1)
+					end
+					
+					if self.yScale then
+						obj:scale(1,self.endyS/obj.yScale)
+					end
+					
+					if self.alpha then
+						obj.alpha = self.endAlpha
+					end
+					
+					if self.rotation then
+						obj:rotate(self.endRot-obj.rotation)
+					end
+					
+					if self.onFrac then
+						if self.onFrac.fraction <= 1 then			-- makes sure fractional listener is executed in cases whereby framerate drops, if it's within animation time
+							self.onFrac.listener(obj)
+						end
+					end
+					
+					if self.onComplete then
+						self.onComplete(obj)
+					end
+					
+					cancel(self)
+					self=nil
+				else
+					-- check for fractional listener
+					if self.onFrac then
+						if timePassed/self.time >= self.onFrac.fraction then
+							self.onFrac.listener(obj)
+							self.onFrac = nil
+						end
+					end
+					
+					-- change parameters if assigned
+					if self.x then
+						obj:translate(self.transition(timePassed,self.x,self.dX,self.time)-obj.x,0)
+					end
+					
+					if self.y then
+						obj:translate(0,self.transition(timePassed,self.y,self.dY,self.time)-obj.y)
+					end
+					
+					if self.xScale then
+						obj:scale(self.transition(timePassed,self.xScale,self.dxS,self.time)/obj.xScale,1)
+					end
+					
+					if self.yScale then
+						obj:scale(1,self.transition(timePassed,self.yScale,self.dyS,self.time)/obj.yScale)
+					end
+					
+					if self.alpha then
+						obj.alpha = self.transition(timePassed,self.alpha,self.dA,self.time)
+					end
+					
+					if self.rotation then
+						obj:rotate(self.transition(timePassed,self.rotation,self.dRot,self.time)-obj.rotation)
+					end
 				end
 			end
+		else
+			-- kill enterFrame listener ie. transition if object has been removed
+			print("Transition Warning: Object Missing. Cancelling transition.")
+			cancel(self)
+			self=nil
 		end
 	end
 	
