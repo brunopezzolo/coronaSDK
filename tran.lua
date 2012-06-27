@@ -600,8 +600,8 @@ function from(obj,params)
 		end
 		
 		if params.maskScaleY then
-			obj.maskScaleX = obj.maskScaleX + params.maskScaleX
-			params.maskScaleX = -params.maskScaleX
+			obj.maskScaleY = obj.maskScaleY + params.maskScaleY
+			params.maskScaleY = -params.maskScaleY
 		end
 		
 		if params.maskRotation then
