@@ -1,12 +1,13 @@
 --=====================================================================================--
 --[[ 
 Abstract: Improved transition library
-Version: 1.0.1 (June 28th 2012)
+Version: 1.0.2 (June 28th 2012)
 Copyright (c) 2012 Lian Yuanlin, timespacemagic LLP
 
 Changelog:
 v1.0.0 Transition call to replace original Corona SDK function
 v1.0.1 Added stage check for object in transition. Kills listener if object missing.
+v1.0.2 Added support for mask parameters.
 --]]
 --======================================================================================--
 
@@ -225,7 +226,7 @@ end
 
 --[[BACK EASING: overshooting cubic easing: (s+1)*t^3 - s*t^2--]]
 easings["inBack"] = function(t,b,c,d)
-	local s = 1.70158	-- gives a back bounce effect of 10% c, according to Robbert Penner anyway
+	local s = 1.70158	-- gives a back bounce effect of 10% c, according to Robert Penner anyway
 	
 	t=t/d
 	return c*t*t*((s+1)*t-s) + b
@@ -340,6 +341,14 @@ transitFunc = function(self,e)
 						obj:translate(0,self.endY-obj.y)
 					end
 					
+					if self.width then
+						obj.width = self.endWidth
+					end
+					
+					if self.height then
+						obj.height = self.endHeight
+					end
+					
 					if self.xScale then
 						obj:scale(self.endxS/obj.xScale,1)
 					end
@@ -360,6 +369,26 @@ transitFunc = function(self,e)
 						if self.onFrac.fraction <= 1 then			-- makes sure fractional listener is executed in cases whereby framerate drops, if it's within animation time
 							self.onFrac.listener(obj)
 						end
+					end
+					
+					if self.maskX then
+						obj.maskX = self.endmX
+					end
+					
+					if self.maskY then
+						obj.maskY = self.endmY
+					end
+					
+					if self.maskScaleX then
+						obj.maskScaleX = self.endmxS
+					end
+					
+					if self.maskScaleY then
+						obj.maskScaleY = self.endmyS
+					end
+					
+					if self.maskRotation then
+						obj.maskRotation = self.endmRot
 					end
 					
 					if self.onComplete then
@@ -386,6 +415,14 @@ transitFunc = function(self,e)
 						obj:translate(0,self.transition(timePassed,self.y,self.dY,self.time)-obj.y)
 					end
 					
+					if self.width then
+						obj.width = self.transition(timePassed,self.width,self.dWidth,self.time)
+					end
+					
+					if self.height then
+						obj.height = self.transition(timePassed,self.height,self.dHeight,self.time)
+					end
+					
 					if self.xScale then
 						obj:scale(self.transition(timePassed,self.xScale,self.dxS,self.time)/obj.xScale,1)
 					end
@@ -400,6 +437,26 @@ transitFunc = function(self,e)
 					
 					if self.rotation then
 						obj:rotate(self.transition(timePassed,self.rotation,self.dRot,self.time)-obj.rotation)
+					end
+					
+					if self.maskX then
+						obj.maskX = self.transition(timePassed,self.maskX,self.dmX,self.time)
+					end
+					
+					if self.maskY then
+						obj.maskY = self.transition(timePassed,self.maskY,self.dmY,self.time)
+					end
+					
+					if self.maskScaleX then
+						obj.maskScaleX = self.transition(timePassed,self.maskScaleX,self.dmxS,self.time)
+					end
+					
+					if self.maskScaleY then
+						obj.maskScaleY = self.transition(timePassed,self.maskScaleY,self.dmyS,self.time)
+					end
+					
+					if self.maskRotation then
+						obj.maskRotation = self.transition(timePassed,self.maskRotation,self.dmRot,self.time)
 					end
 				end
 			end
@@ -425,17 +482,31 @@ function to(obj,params)
 	if params.delta then
 		if params.x then transitionHandle.x = obj.x; transitionHandle.endX = params.x + obj.x; transitionHandle.dX = params.x; end
 		if params.y then transitionHandle.y = obj.y; transitionHandle.endY = params.y + obj.y; transitionHandle.dY = params.y; end
+		if params.width then transitionHandle.width = obj.width; transitionHandle.endWidth = params.width + obj.width; transitionHandle.dWidth = params.width; end
+		if params.height then transitionHandle.height = obj.height; transitionHandle.endHeight = params.height + obj.height; transitionHandle.dHeight = params.height; end
 		if params.xScale then transitionHandle.xScale = obj.xScale; transitionHandle.endxS = params.xScale + obj.xScale; transitionHandle.dxS = params.xScale; end
 		if params.yScale then transitionHandle.yScale = obj.yScale; transitionHandle.endyS = params.yScale + obj.yScale; transitionHandle.dyS = params.yScale; end
 		if params.alpha then transitionHandle.alpha = obj.alpha; transitionHandle.endAlpha = params.alpha + obj.alpha; transitionHandle.dA = params.alpha; end
 		if params.rotation then transitionHandle.rotation = obj.rotation; transitionHandle.endRot = params.rotation + obj.rotation; transitionHandle.dRot = params.rotation; end
+		if params.maskX then transitionHandle.maskX = obj.maskX; transitionHandle.endmX = params.maskX + obj.maskX; transitionHandle.dmX = params.maskX; end
+		if params.maskY then transitionHandle.maskY = obj.maskY; transitionHandle.endmY = params.maskY + obj.maskY; transitionHandle.dmY = params.maskY; end
+		if params.maskScaleX then transitionHandle.maskScaleX = obj.maskScaleX; transitionHandle.endmxS = params.maskScaleX + obj.maskScaleX; transitionHandle.dmxS = params.maskScaleX; end
+		if params.maskScaleY then transitionHandle.maskScaleY = obj.maskScaleY; transitionHandle.endmyS = params.maskScaleY + obj.maskScaleY; transitionHandle.dmyS = params.maskScaleY; end
+		if params.maskRotation then transitionHandle.maskRotation = obj.maskRotation; transitionHandle.endmRot = params.maskRotation + obj.maskRotation; transitionHandle.dmRot = params.maskRotation; end
 	else
 		if params.x then transitionHandle.x = obj.x; transitionHandle.endX = params.x; transitionHandle.dX = params.x - obj.x; end
 		if params.y then transitionHandle.y = obj.y; transitionHandle.endY = params.y; transitionHandle.dY = params.y - obj.y; end
+		if params.width then transitionHandle.width = obj.width; transitionHandle.endWidth = params.width; transitionHandle.dWidth = params.width - obj.width; end
+		if params.height then transitionHandle.height = obj.height; transitionHandle.endHeight = params.height; transitionHandle.dHeight = params.height - obj.height; end
 		if params.xScale then transitionHandle.xScale = obj.xScale; transitionHandle.endxS = params.xScale; transitionHandle.dxS = params.xScale - obj.xScale; end
 		if params.yScale then transitionHandle.yScale = obj.yScale; transitionHandle.endyS = params.yScale; transitionHandle.dyS = params.yScale - obj.yScale; end
 		if params.alpha then transitionHandle.alpha = obj.alpha; transitionHandle.endAlpha = params.alpha; transitionHandle.dA = params.alpha - obj.alpha; end
 		if params.rotation then transitionHandle.rotation = obj.rotation; transitionHandle.endRot = params.rotation; transitionHandle.dRot = params.rotation - obj.rotation; end
+		if params.maskX then transitionHandle.maskX = obj.maskX; transitionHandle.endmX = params.maskX; transitionHandle.dmX = params.maskX - obj.maskX; end
+		if params.maskY then transitionHandle.maskY = obj.maskY; transitionHandle.endmY = params.maskY; transitionHandle.dmY = params.maskY - obj.maskY; end
+		if params.maskScaleX then transitionHandle.maskScaleX = obj.maskScaleX; transitionHandle.endmxS = params.maskScaleX; transitionHandle.dmxS = params.maskScaleX - obj.maskScaleX; end
+		if params.maskScaleY then transitionHandle.maskScaleY = obj.maskScaleY; transitionHandle.endmyS = params.maskScaleY; transitionHandle.dmyS = params.maskScaleY - obj.maskScaleY; end
+		if params.maskRotation then transitionHandle.maskRotation = obj.maskRotation; transitionHandle.endmRot = params.maskRotation; transitionHandle.dmRot = params.maskRotation - obj.maskRotation; end
 	end
 	
 	
@@ -483,6 +554,16 @@ function from(obj,params)
 			params.y = -params.y
 		end
 		
+		if params.width then
+			obj.width = obj.width + params.width
+			params.width = -params.width
+		end
+		
+		if params.height then
+			obj.height = obj.height + params.height
+			params.height = -params.height
+		end
+		
 		if params.xScale then
 			obj:scale((params.xScale/obj.xScale)+1,1)
 			params.xScale = -params.xScale
@@ -502,6 +583,31 @@ function from(obj,params)
 			obj:rotate(params.rotation)
 			params.rotation = -params.rotation
 		end
+		
+		if params.maskX then
+			obj.maskX = obj.maskX + params.maskX
+			params.alpha = -params.maskX
+		end
+		
+		if params.maskY then
+			obj.maskY = obj.maskY + params.maskY
+			params.maskY = -params.maskY
+		end
+		
+		if params.maskScaleX then
+			obj.maskScaleX = obj.maskScaleX + params.maskScaleX
+			params.maskScaleX= -params.maskScaleX
+		end
+		
+		if params.maskScaleY then
+			obj.maskScaleX = obj.maskScaleX + params.maskScaleX
+			params.maskScaleX = -params.maskScaleX
+		end
+		
+		if params.maskRotation then
+			obj.maskRotation = obj.maskRotation + params.maskRotation
+			params.maskRotation = -params.maskRotation
+		end
 	else
 		-- swapping starting and ending points
 		if params.x then
@@ -514,6 +620,18 @@ function from(obj,params)
 			temp = obj.y
 			obj:translate(0,params.y-obj.y)
 			params.y = temp
+		end
+		
+		if params.width then
+			temp = obj.width
+			obj.width = params.width
+			params.width = temp
+		end
+		
+		if params.height then
+			temp = obj.height
+			obj.height = params.height
+			params.height = temp
 		end
 		
 		if params.xScale then
@@ -538,6 +656,36 @@ function from(obj,params)
 			temp = obj.rotation
 			obj:rotate(params.rotation-obj.rotation)
 			params.rotation = temp
+		end
+		
+		if params.maskX then
+			temp = obj.maskX
+			obj.maskX = params.maskX
+			params.maskX = temp
+		end
+		
+		if params.maskY then
+			temp = obj.maskY
+			obj.maskY = params.maskY
+			params.maskY = temp
+		end
+		
+		if params.maskScaleX then
+			temp = obj.maskScaleX
+			obj.maskScaleX = params.maskScaleX
+			params.maskScaleX = temp
+		end
+		
+		if params.maskScaleY then
+			temp = obj.maskScaleY
+			obj.maskScaleY = params.maskScaleY
+			params.maskScaleY = temp
+		end
+		
+		if params.maskRotation then
+			temp = obj.maskRotation
+			obj.maskRotation = params.maskRotation
+			params.maskRotation = temp
 		end
 	end
 	
